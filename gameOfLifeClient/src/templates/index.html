@@ -1,0 +1,195 @@
+<head>
+    <title>Client index</title>
+    <style>
+        body {
+          margin: 0;
+          padding: 0;
+        }
+
+        canvas {
+          display: block;
+          margin: 20px auto 0;
+          border: 1px dotted #000;
+        }
+  </style>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+</head>
+
+<body>
+    <div>
+        <form style="display: inline-grid; margin-top: 15%; margin-left: 3%; float: left;">
+            <select id="size" style="border-width: medium; border-radius: 5px;">
+                <option disabled>Выберите размер поля</option>
+                <option value="little" style="background: #4d525c; color: #FFF;">20 * 30</option>
+                <option selected value="middle" style="background: #4d525c; color: #FFF;">25 * 40</option>
+            </select>
+            <button type="button" id="btn" class="btn btn-dark" style="display: block; margin-top: 5%;">Выбрать</button>
+            <button type="button" id="btn2" class="btn btn-dark" style="display: inline-block; margin-top: 5%;">Старт</button>
+        </form>
+    </div>
+    <div>
+        <canvas id="mycanvas" style="display: block;"></canvas>
+    </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+        const btn = document.querySelector('#btn');
+        const btn2 = document.querySelector('#btn2');
+        const sb = document.querySelector('#size');
+        let cellsList = [];
+        var cW = 800, cH = 533, cNX = 30, cNY = 20;
+
+        printCanvas();
+
+        for (let i = 0; i < cNY; i++) {
+            cellsList[i] = [];
+            for (let j = 0; j < cNX; j++) {
+                cellsList[i][j] = 0;
+            }
+        }
+
+        function printCanvas() {
+            var myGridObject = {
+                canvasWidth : cW,
+                canvasHeight : cH,
+                cellsNumberX : cNX,
+                cellsNumberY : cNY,
+                color : "#000000", //цвет линий
+                    //Метод setSettings устанавливает все настройки
+                setSettings : function() {
+                            // получаем наш холст по id
+                    canvas = document.getElementById("mycanvas");
+                            // устанавливаем ширину холста
+                    canvas.width = this.canvasWidth;
+                            // устанавливаем высоту холста
+                    canvas.height = this.canvasHeight;
+                            // canvas.getContext("2d") создает объект для рисования
+                    ctx = canvas.getContext("2d");
+                            // задаём цвет линий
+                    ctx.strokeStyle = this.color;
+                            // вычисляем ширину ячейки по горизонтали
+                    lineX = canvas.width / this.cellsNumberX;
+                            // вычисляем высоту ячейки по вертикали
+                    lineY = canvas.height / this.cellsNumberY;
+                },
+                    // данная функция как раз и будет отрисовывать сетку
+                drawGrid : function() {
+                            // в переменной buf будет храниться начальная координата, откуда нужно рисовать линию
+                            // с каждой итерацией она должна увеличиваться либо на ширину ячейки, либо на высоту
+                    var buf = 0;
+                    // Рисуем вертикальные линии
+                    for (var i = 0; i <= this.cellsNumberX; i++) {
+                                    // начинаем рисовать
+                        ctx.beginPath();
+                                    // ставим начальную точку
+                        ctx.moveTo(buf, 0);
+                                    // указываем конечную точку для линии
+                        ctx.lineTo(buf, canvas.height);
+                                    // рисуем и выводим линию
+                        ctx.stroke();
+                        buf +=lineX;
+                    }
+                    buf = 0;
+                    // Рисуем горизонтальные линии
+                    for (var j = 0; j <= this.cellsNumberY; j++) {
+                        ctx.beginPath();
+                        ctx.moveTo(0, buf);
+                        ctx.lineTo(canvas.width, buf);
+                        ctx.stroke();
+                        buf +=lineY;
+                    }
+                }
+            }
+            myGridObject.setSettings();
+            myGridObject.drawGrid();
+        }
+
+        btn.onclick = (event) => {
+            event.preventDefault();
+            some = document.getElementById('size').value
+                if (some == "little") {
+      				cW = 800
+      				cH = 533
+                    cNX = 30
+                    cNY = 20
+      			}
+      			else
+      			{
+      			    cW = 1067
+      				cH = 667
+                    cNX = 40
+                    cNY = 25
+      			}
+
+      		for (let i = 0; i < cNY; i++) {
+      		    cellsList[i] = [];
+      		    for (let j = 0; j < cNX; j++) {
+      		        cellsList[i][j] = 0;
+      		    }
+      		}
+
+            printCanvas();
+        };
+
+        var elem = document.getElementById('mycanvas');
+        elem.addEventListener('click', function(event) {
+            var x = event.pageX - elem.offsetLeft,
+            y = event.pageY - elem.offsetTop;
+
+            var clickX = Math.floor(x / 26.6), clickY = Math.floor(y / 26.6);
+            ctx.rect(clickX * 26.68, clickY * 26.68, 26.6, 26.6);
+            ctx.fill();
+            cellsList[clickY][clickX] = 1;
+        }, false);
+
+        async function printState(arrays_array) {
+            return new Promise((resolve) => {
+                setTimeout(() => {
+                    printCanvas();
+                    for (var j = 0; j < arrays_array.length; j++) {
+                        for (var k = 0; k < arrays_array[j].length; k++) {
+                            if (arrays_array[j][k] == 1) {
+                                console.log("is true");
+                                ctx.rect(k * 26.68, j * 26.68, 26.6, 26.6);
+                                ctx.fill();
+                            }
+                        }
+                    }
+
+                  resolve("ok");
+                }, 100);
+            });
+        }
+
+        btn2.onclick = (event) => {
+            console.log("it works!") //
+            $.ajax({
+                    type: "POST",
+                    url: "/",
+                    crossDomain: true,
+                    headers: {
+                        "Accept": "application/json; odata=verbose"
+                    },
+                    data: JSON.stringify({"data": cellsList}),
+                    contentType: "application/json",
+                    //dataType: 'json',
+                    success: async function(data){
+                        console.log(data);
+                        var arrays_array = data.data;
+
+                        for (var i = 0; i < arrays_array.length; i++){
+                            value = await printState(arrays_array[i]);
+                        }
+
+                    },
+                    error: function(data){
+                        console.log(data);
+                    }
+                });
+
+        }
+    </script>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+</body>

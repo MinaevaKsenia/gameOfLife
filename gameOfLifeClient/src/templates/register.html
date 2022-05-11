@@ -1,0 +1,23 @@
+{% extends "bootstrap/base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block title %}
+Register
+{% endblock %}
+
+
+{% block content %}
+<div style="width: 55%; height: 400px; margin-left: auto; margin-right: auto; margin-top: 100px; border-style: groove; border-color: #337ab7; border-radius: 20px; border-width: 5px;">
+  <p style="text-align: center; margin-top: 20px;"><font size="6" color="#337ab7" face="Arial">Регистрация</font></p>
+  <div class="container">
+      <form class="form-signin" method="POST" action="http://127.0.0.1:4000/register" style="width: 70%;">
+          {{ form.hidden_tag() }}
+          {{ wtf.form_field(form.username) }}
+          {{ wtf.form_field(form.email) }}
+          {{ wtf.form_field(form.password) }}
+        <button class="btn btn-lg btn-primary btn-block" type="submit" style="display: block; width: 300px; margin-left: auto; margin-right: auto;">Создать</button>
+      </form>
+
+    </div> <!-- /container -->
+</div>
+{% endblock %}
